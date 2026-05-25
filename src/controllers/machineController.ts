@@ -1,26 +1,110 @@
 import { type Request, type Response } from 'express';
+import { prisma } from '../../lib/prisma.js';
 
-export const getAllMachines = (req: Request, res: Response) => {
-  res.json({ message: 'List of machines', machines: [] });
+export const getAllMachines = async (req: Request, res: Response) => {
+  try {
+    const machine = await prisma.machine.findMany();
+
+     res.status(201).json({
+      message: 'Machine fetched',
+      machine,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching machine',
+    });
+  }
 };
 
-export const getMachineById = (req: Request, res: Response) => {
+export const getMachineById = async (req: Request, res: Response) => {
   const id = req.params.id;
+  try {
+    const machine = await prisma.machine.findUnique({
+      where: {
+      id: Number(id),
+      },
+    });
+
+    res.status(201).json({
+      message: 'Machine fetched',
+      machine,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching machine',
+    });
+  }
+
   res.json({ message: `Machine with ID ${id}`, machine: {} });
 };
 
-export const createMachine = (req: Request, res: Response) => {
-  const { name, model, sector } = req.body;
-  res.json({ message: 'Machine created', machine: { name, model, sector } });
-};
+export const createMachine = async (req: Request, res: Response) => {
+  try {
+    const { name, model, sector } = req.body;
 
-export const updateMachine = (req: Request, res: Response) => {
+    const machine = await prisma.machine.create({
+      data: {
+        name,
+        model,
+        sector,
+      },
+    }); 
+    
+    res.status(201).json({
+      message: 'Machine created',
+      machine,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error creating machine',
+    });
+}};
+
+export const updateMachine = async (req: Request, res: Response) => {
   const id = req.params.id;
   const { name, model, sector } = req.body;
-  res.json({ message: `Machine ${id} updated`, machine: { name, model, sector } });
+
+  try {
+    const machine = await prisma.machine.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        name,
+        model,
+        sector,
+      },
+    });
+
+    res.status(201).json({
+      message: 'Machine updated',
+      machine,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error updating machine',
+    });
+  }
 };
 
-export const deleteMachine = (req: Request, res: Response) => {
+export const deleteMachine = async (req: Request, res: Response) => {
   const id = req.params.id;
-  res.json({ message: `Machine ${id} deleted` });
+  try {
+    await prisma.machine.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    res.status(201).json({
+      message: 'Machine deleted',
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error deleting machine',
+    });
+  }
 };

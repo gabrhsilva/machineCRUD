@@ -18,19 +18,21 @@ model User {
   email     String   @unique
   name      String?
   role      Role     @default(USER)
-  machines  Machine[]
+  
+  // machines  Machine[]
 }
 
 model Machine {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  published Boolean  @default(false)
-  title     String   @db.VarChar(255)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+  // published Boolean  @default(false)
+  name      String   @db.VarChar(255)   
   model     String   @db.VarChar(255)
-  section   String   @db.VarChar(255)
+  sector    String   @db.VarChar(255)   
+ 
+  // author    User     @relation(fields: [authorId], references: [id])
+  // authorId  Int
 }
 
 enum Role {
