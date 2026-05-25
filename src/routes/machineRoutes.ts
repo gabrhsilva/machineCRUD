@@ -13,6 +13,6 @@ machineRouter.get('/', getAllMachines);
 machineRouter.get('/:id', getMachineById);
 machineRouter.post('/', createMachine);
 machineRouter.put('/:id', updateMachine);
-machineRouter.delete('/:id', deleteMachine);    
+machineRouter.delete('/:id', deleteMachine);
 
 export default machineRouter;

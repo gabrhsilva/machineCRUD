@@ -1,9 +1,9 @@
 import express from 'express';
+import userRouter from './routes/userRoutes.js';
 import machineRouter from './routes/machineRoutes.js';
-import postRouter from './routes/postRoutes.js';
 import { type Response } from 'express';
 import { type Request } from 'express'
-import path from 'path'
+// import path from 'path'
 
 const app = express();
 const port: number = 3000;
@@ -11,12 +11,12 @@ const port: number = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/machines', machineRouter);
-app.use('/api/posts', postRouter);
+app.use('/machines', machineRouter);
+app.use('/users', userRouter);
 
-// Responda com Olá Mundo! na página inicial:
+// Main
 app.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(process.cwd(), 'src/views/index.html'));
+  res.redirect("/machines");
 });
 
 app.listen(port, () => {
