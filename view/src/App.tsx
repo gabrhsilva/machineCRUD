@@ -6,6 +6,7 @@ function App() {
     <>
       <h1>MachineCRUD</h1>
       <MachineList />
+      <footer>© {new Date().getFullYear()} MachineCRUD. Todos os direitos reservados.</footer>
     </>
   )
 }
