@@ -117,7 +117,7 @@ export function MachineList() {
     try {
       const res = await fetch(API);
       const data = await res.json();
-      setMachines(data.machine ?? []);
+      setMachines(data.machines ?? []);
       setLoadError(false);
     } catch {
       setLoadError(true);
@@ -226,7 +226,7 @@ export function MachineList() {
       {/* ── Header row ── */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
         <Box>
-          <Typography variant="h6" fontWeight={700} color="text.primary">
+          <Typography variant="h6" sx={{ fontWeight: 700 }} color="text.primary">
             Máquinas
           </Typography>
           {!loading && !loadError && (
@@ -279,7 +279,7 @@ export function MachineList() {
       {searchResult && searchResult !== "idle" && searchResult !== "not_found" && (
         <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
           <Box sx={{ px: 2, pt: 1.5, pb: 0.5 }}>
-            <Typography variant="caption" fontWeight={600} color="primary" sx={{ textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            <Typography variant="caption" color="primary" sx={{ fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>
               Resultado da busca
             </Typography>
           </Box>
