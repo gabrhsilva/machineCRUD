@@ -1,10 +1,13 @@
 import { type Request, type Response } from 'express';
-import * as machineModel from '../model/machineModel.js';
+import { Machine, MachineRepository } from '../model/machineModel.js';
+import { machineView } from '../views/machineView.js';
+
+const machineRepository = new MachineRepository();
 
 export const getAllMachines = async (req: Request, res: Response) => {
   try {
-    const machines = await machineModel.findAll();
-    res.json({ message: 'Machines fetched', machines });
+    const machines = await machineRepository.findAll();
+    res.json(machineView.many(machines));
   } catch {
     res.status(500).json({ message: 'Error fetching machines' });
   }
@@ -12,9 +15,9 @@ export const getAllMachines = async (req: Request, res: Response) => {
 
 export const getMachineById = async (req: Request, res: Response) => {
   try {
-    const machine = await machineModel.findById(Number(req.params.id));
+    const machine = await machineRepository.findById(Number(req.params.id));
     if (!machine) return res.status(404).json({ message: 'Machine not found' });
-    res.json({ message: 'Machine fetched', machine });
+    res.json(machineView.one(machine));
   } catch {
     res.status(500).json({ message: 'Error fetching machine' });
   }
@@ -23,27 +26,31 @@ export const getMachineById = async (req: Request, res: Response) => {
 export const createMachine = async (req: Request, res: Response) => {
   try {
     const { name, model, sector } = req.body;
-    const machine = await machineModel.create({ name, model, sector });
-    res.status(201).json({ message: 'Machine created', machine });
-  } catch {
-    res.status(500).json({ message: 'Error creating machine' });
+    const machine = new Machine(name, model, sector);
+    machine.validate();
+    const created = await machineRepository.create(machine);
+    res.status(201).json(machineView.created(created));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
   }
 };
 
 export const updateMachine = async (req: Request, res: Response) => {
   try {
     const { name, model, sector } = req.body;
-    const machine = await machineModel.update(Number(req.params.id), { name, model, sector });
-    res.json({ message: 'Machine updated', machine });
-  } catch {
-    res.status(500).json({ message: 'Error updating machine' });
+    const machine = new Machine(name, model, sector);
+    machine.validate();
+    const updated = await machineRepository.update(Number(req.params.id), machine);
+    res.json(machineView.updated(updated));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
   }
 };
 
 export const deleteMachine = async (req: Request, res: Response) => {
   try {
-    await machineModel.remove(Number(req.params.id));
-    res.json({ message: 'Machine deleted' });
+    await machineRepository.remove(Number(req.params.id));
+    res.json(machineView.deleted());
   } catch {
     res.status(500).json({ message: 'Error deleting machine' });
   }

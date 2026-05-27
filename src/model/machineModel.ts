@@ -1,27 +1,42 @@
 import { prisma } from '../../lib/prisma.js';
+import type { MachineModel } from '../../generated/prisma/models.js';
 
-type MachineData = { name: string; model: string; sector: string };
+export type MachineData = Pick<MachineModel, 'name' | 'model' | 'sector'>;
 
-function validateMachineData(data: Partial<MachineData>): void {
-  if (!data.name?.trim()) throw new Error('name is required');
-  if (!data.model?.trim()) throw new Error('model is required');
-  if (!data.sector?.trim()) throw new Error('sector is required');
+export class Machine {
+  constructor(
+    public name: string,
+    public model: string,
+    public sector: string
+  ) {
+    this.validate();
+  }
+
+  validate(): void {
+    if (!this.name?.trim()) throw new Error('name is required');
+    if (!this.model?.trim()) throw new Error('model is required');
+    if (!this.sector?.trim()) throw new Error('sector is required');
+  }
 }
 
-export const findAll = () => prisma.machine.findMany();
+export class MachineRepository {
+  findAll() {
+    return prisma.machine.findMany();
+  }
 
-export const findById = (id: number) =>
-  prisma.machine.findUnique({ where: { id } });
+  findById(id: number) {
+    return prisma.machine.findUnique({ where: { id } });
+  }
 
-export const create = (data: MachineData) => {
-  validateMachineData(data);
-  return prisma.machine.create({ data });
-};
+  create(data: MachineData) {
+    return prisma.machine.create({ data });
+  }
 
-export const update = (id: number, data: MachineData) => {
-  validateMachineData(data);
-  return prisma.machine.update({ where: { id }, data });
-};
+  update(id: number, data: MachineData) {
+    return prisma.machine.update({ where: { id }, data });
+  }
 
-export const remove = (id: number) =>
-  prisma.machine.delete({ where: { id } });
+  remove(id: number) {
+    return prisma.machine.delete({ where: { id } });
+  }
+}
